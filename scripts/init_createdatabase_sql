@@ -1,0 +1,9 @@
+use master;
+create database data_warehouse;
+use data_warehouse;
+go
+create schema bronze;
+go
+create schema silver;
+go
+create schema gold;
