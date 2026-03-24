@@ -1,0 +1,122 @@
+create or alter procedure bronze.load_bronze as
+begin
+    declare @start_time datetime,@end_time datetime,@batch_start_time datetime,@batch_end_time datetime;
+	
+	begin try
+	    set @batch_start_time = getdate();
+		print '========================================='
+		print 'Loading Bronze Layer'
+		print '========================================='
+		print '-----------------------------------------'
+		print 'Loading CRM tables'
+		print '-----------------------------------------'
+
+		print 'Truncating Table bronze.crm_cust_info '
+		print 'Inserting Table bronze.crm_cust_info'
+		set @start_time = getdate();
+		truncate table bronze.crm_cust_info;
+		bulk insert bronze.crm_cust_info
+		from 'C:\Users\achan\desktop\Datawarehousing Datasets\cust_info.csv'
+		with 
+		(
+		firstrow =2,
+		fieldterminator =',',
+		tablock
+		);
+		set @end_time = getdate();
+
+		print 'Load Time for Table bronze.crm_cust_info:  ' + cast (datediff (second,@start_time,@end_time) as nvarchar) + 'seconds';
+
+		
+		print 'Truncating Table bronze.crm_prd_info '
+		print 'Inserting Table bronze.crm_prd_info'
+		set @start_time = getdate();
+		truncate table bronze.crm_prd_info;
+		bulk insert bronze.crm_prd_info
+		from 'C:\Users\achan\desktop\Datawarehousing Datasets\prd_info.csv'
+		with 
+		(
+		firstrow =2,
+		fieldterminator =',',
+		tablock
+		);
+		set @end_time = getdate();
+		print 'Load Time for Table bronze.crm_prd_info:  ' + cast (datediff (second,@start_time,@end_time) as nvarchar) + 'seconds';
+
+
+		print 'Truncating Table bronze.crm_sales_details '
+		print 'Inserting Table bronze.crm_sales_details'
+		set @start_time = getdate();
+		truncate table bronze.crm_sales_details;
+		bulk insert bronze.crm_sales_details
+		from 'C:\Users\achan\desktop\Datawarehousing Datasets\sales_details.csv'
+		with 
+		(
+		firstrow =2,
+		fieldterminator =',',
+		tablock
+		);
+		set @end_time = getdate();
+		print 'Load Time for Table bronze.crm_sales_details:  ' + cast (datediff (second,@start_time,@end_time) as nvarchar) + 'seconds';
+
+		print '-----------------------------------------'
+		print 'Loading ERP tables'
+		print '-----------------------------------------'
+		print 'Truncating Table bronze.erp_custaz12 '
+		print 'Inserting Table bronze.erp_custaz12'
+		set @start_time = getdate();
+		truncate table bronze.erp_custaz12;
+		bulk insert bronze.erp_custaz12
+		from 'C:\Users\achan\desktop\Datawarehousing Datasets\CUST_AZ12.csv'
+		with (
+		firstrow=2,
+		fieldterminator = ',',
+		tablock
+		);
+		set @end_time = getdate();
+		print 'Load Time for Table bronze.erp_custaz12:  ' + cast (datediff (second,@start_time,@end_time) as nvarchar) + 'seconds';
+
+
+		print 'Truncating Table bronze.erp_loc_a101 '
+		print 'Inserting Table bronze.erp_loc_a101'
+		set @start_time = getdate();
+		truncate table bronze.erp_loc_a101;
+		bulk insert bronze.erp_loc_a101
+		from 'C:\Users\achan\desktop\Datawarehousing Datasets\LOC_A101.csv'
+		with (
+		firstrow=2,
+		fieldterminator = ',',
+		tablock
+		);
+		set @end_time = getdate();
+		print 'Load Time for Table bronze.erp_loc_a101:  ' + cast (datediff (second,@start_time,@end_time) as nvarchar) + 'seconds';
+
+
+		print 'Truncating Table bronze.erp_px_cat_g1v2 '
+		print 'Inserting Table bronze.erp_px_cat_g1v2'
+		set @start_time = getdate();
+		truncate table bronze.erp_px_cat_g1v2;
+		bulk insert bronze.erp_px_cat_g1v2
+		from 'C:\Users\achan\desktop\Datawarehousing Datasets\PX_CAT_G1V2.csv'
+		with (
+		firstrow =2,
+		fieldterminator = ',',
+		tablock
+		);
+		set @end_time = getdate();
+		print 'Load Time for Table bronze.erp_px_cat_g1v2:  ' + cast (datediff (second,@start_time,@end_time) as nvarchar) + 'seconds';
+	    set @batch_end_time = getdate();
+		print 'Load Time for Bronze Layer: '+ cast (datediff (second,@batch_start_time,@batch_end_time) as nvarchar) + 'seconds';
+	end try
+	
+	begin catch
+	 print '=============================================================='
+	 print 'Error Occured when loading Bronze Layer'
+	 print 'Error Message' +  error_message();
+	 print 'Error Message' + cast (error_number() as nvarchar);
+	 print 'Error Message' + cast (error_state() as nvarchar);
+	 print '=============================================================='
+	end catch
+end
+
+exec bronze.load_bronze
